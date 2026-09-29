@@ -28,11 +28,11 @@ test('does not complete commands, paths, or identifiers', () => {
 });
 
 test('asks the native spellchecker for a word within its full-line context', { skip: process.platform !== 'darwin', timeout: 30000 }, async () => {
-  const helper = spawn('/usr/bin/swift', ['extensions/mac-word-completion/spell.swift'], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const helper = spawn('/usr/bin/swift', ['extensions/mac-word-completion/spell.swift'], { stdio: ['pipe', 'pipe', 'pipe'], env: { ...process.env, PI_SPELL_DEBUG: '1' } });
+  let error = '';
   try {
     const response = new Promise((resolve, reject) => {
       let output = '';
-      let error = '';
       helper.stdout.on('data', (chunk) => {
         output += chunk;
         if (output.includes('\n')) resolve(JSON.parse(output.split('\n', 1)[0]));
@@ -42,7 +42,8 @@ test('asks the native spellchecker for a word within its full-line context', { s
       helper.on('exit', (code) => { if (!output.includes('\n')) reject(new Error(error || `Swift exited ${code}`)); });
     });
     helper.stdin.write(JSON.stringify({ text: 'un compl', start: 3, length: 5 }) + '\n');
-    assert.ok((await response).some((word) => word.toLowerCase().startsWith('compl') && word.length > 5));
+    const words = await response;
+    assert.ok(words.some((word) => word.toLowerCase().startsWith('compl') && word.length > 5), `Native completions: ${JSON.stringify(words)}; ${error}`);
   } finally {
     helper.kill();
   }
