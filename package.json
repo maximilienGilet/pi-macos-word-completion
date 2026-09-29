@@ -1,0 +1,25 @@
+{
+  "name": "pi-macos-word-completion",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Native macOS dictionary word completion as inline ghost text in Pi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maximilienGilet/pi-macos-word-completion.git"
+  },
+  "keywords": ["pi-package", "pi-extension", "macos", "word-completion"],
+  "engines": { "node": ">=22.19.0" },
+  "os": ["darwin"],
+  "files": ["extensions/"],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  },
+  "pi": {
+    "extensions": ["./extensions/mac-word-completion/index.ts"]
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
