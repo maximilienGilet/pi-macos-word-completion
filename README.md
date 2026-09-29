@@ -4,7 +4,7 @@ Complete the word you are typing in Pi with the native macOS dictionary. The sug
 
 ## Install
 
-Requires macOS, Pi, Node.js 22.19+, and the Swift command-line tool (`xcode-select --install` if needed).
+Requires **macOS 11 (Big Sur) or newer**, Pi, Node.js 22.19+, and the Swift command-line tool (`xcode-select --install` if needed). macOS 11 is the minimum supported by Node.js 22; this extension has not been tested on every macOS release back to 11.
 
 ```sh
 pi install npm:pi-macos-word-completion
