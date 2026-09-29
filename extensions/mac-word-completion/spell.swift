@@ -1,12 +1,16 @@
 import AppKit
 import Foundation
 
+@_silgen_name("NSApplicationLoad")
+func loadAppKit() -> Bool
+
 struct CompletionRequest: Decodable {
     let text: String
     let start: Int
     let length: Int
 }
 
+precondition(loadAppKit(), "Failed to load AppKit")
 let checker = NSSpellChecker.shared
 checker.automaticallyIdentifiesLanguages = true
 
