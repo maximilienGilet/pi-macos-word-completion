@@ -28,11 +28,12 @@ This package replaces Pi's input editor to render ghost text. Another extension 
 
 ```sh
 npm test
+npm run test:release
 npm pack --dry-run
 pi -e .
 ```
 
-The tests run a real `NSSpellChecker` lookup on macOS. The npm package contains the Swift helper alongside the extension.
+CI checks the Swift helper's request/response protocol on a hosted macOS runner. Hosted runners may lack a usable graphical spelling service, so `npm run test:release` also requires a real dictionary completion on a Mac with a graphical session. `npm publish` runs this release check automatically. The npm package contains the Swift helper alongside the extension.
 
 ## License
 

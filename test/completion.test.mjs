@@ -27,12 +27,12 @@ test('does not complete commands, paths, or identifiers', () => {
   assert.equal(ghostSuffix('bonj', ['salut']), null);
 });
 
-test('asks the native spellchecker for a word within its full-line context', { skip: process.platform !== 'darwin', timeout: 30000 }, async () => {
+test('keeps the native helper responsive after an invalid range', { skip: process.platform !== 'darwin', timeout: 30000 }, async () => {
   const helper = spawn('/usr/bin/swift', ['extensions/mac-word-completion/spell.swift'], { stdio: ['pipe', 'pipe', 'pipe'] });
-  let error = '';
   try {
     const response = new Promise((resolve, reject) => {
       let output = '';
+      let error = '';
       helper.stdout.on('data', (chunk) => {
         output += chunk;
         if (output.split('\n').length >= 3) resolve(output.trim().split('\n').map((line) => JSON.parse(line)));
@@ -41,10 +41,11 @@ test('asks the native spellchecker for a word within its full-line context', { s
       helper.on('error', reject);
       helper.on('exit', (code) => { if (output.split('\n').length < 3) reject(new Error(error || `Swift exited ${code}`)); });
     });
+    helper.stdin.write(JSON.stringify({ text: 'bonj', start: 100, length: 4 }) + '\n');
     helper.stdin.write(JSON.stringify({ text: 'un bonj', start: 3, length: 4 }) + '\n');
-    helper.stdin.write(JSON.stringify({ text: 'hello worl', start: 6, length: 4 }) + '\n');
-    const [french, english] = await response;
-    assert.ok(french.includes('bonjour') || english.includes('world'), `Native completions: fr=${JSON.stringify(french)}, en=${JSON.stringify(english)}; ${error}`);
+    const [invalid, valid] = await response;
+    assert.deepEqual(invalid, []);
+    assert.ok(Array.isArray(valid) && valid.every((word) => typeof word === 'string'));
   } finally {
     helper.kill();
   }

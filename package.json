@@ -20,6 +20,9 @@
     "extensions": ["./extensions/mac-word-completion/index.ts"]
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "test:native": "node --test test/native-dictionary.integration.mjs",
+    "test:release": "npm test && npm run test:native",
+    "prepublishOnly": "npm run test:release"
   }
 }
